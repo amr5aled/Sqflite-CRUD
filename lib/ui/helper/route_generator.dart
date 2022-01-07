@@ -1,3 +1,8 @@
+import 'package:crudsqlite/core/models/item_model.dart';
+import 'package:crudsqlite/ui/resources/app_routes.dart';
+import 'package:crudsqlite/ui/screens/addNotes/add_notes.dart';
+import 'package:crudsqlite/ui/screens/home/home_screen.dart';
+import 'package:crudsqlite/ui/screens/productsDetails/productDetails_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -7,9 +12,19 @@ class RouteGenerator {
     final dynamic args = settings.arguments;
     switch (settings.name) {
 
-      // // Splash Screen
-      // case AppRoute.splash:
-      //   return _screenInit(SplashScreen());
+      // Home Screen
+      case AppRoute.home:
+        return _screenInit(const HomeScreen());
+      //AddNotes
+      case AppRoute.notes:
+        return _screenInit(AddNotes(
+          isEdit: args as bool,
+        ));
+      //ProductDetailScreen
+      case AppRoute.details:
+        return _screenInit(ProductDetailScreen(
+          items: args as Items,
+        ));
 
       default:
         // If there is no such named route in the switch statement, e.g. /third

@@ -1,3 +1,5 @@
 class AppRoute {
-  static const String splash = '/';
+  static const String home = '/';
+  static const String details = '/Details';
+  static const String notes = '/Notes';
 }
