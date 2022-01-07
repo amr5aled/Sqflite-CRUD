@@ -1,3 +1,4 @@
+import 'package:crudsqlite/ui/widgets/size_extension.dart';
 import 'package:flutter/material.dart';
 
 class AppCard extends StatelessWidget {
@@ -8,9 +9,9 @@ class AppCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-        elevation: 4.0,
+        elevation: 6.0,
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(15.0)),
+          borderRadius: BorderRadius.all(Radius.circular(20.0)),
         ),
         child: child!);
   }

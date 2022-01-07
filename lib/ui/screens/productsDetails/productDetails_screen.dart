@@ -2,7 +2,7 @@ import 'package:crudsqlite/core/models/item_model.dart';
 import 'package:crudsqlite/ui/widgets/app_size_boxes.dart';
 import 'package:crudsqlite/ui/widgets/size_extension.dart';
 import 'package:flutter/material.dart';
-import '../../helper/navigator.dart';
+
 import '../../resources/index.dart';
 import '../../widgets/app_text_display.dart';
 
@@ -19,7 +19,7 @@ class ProductDetailScreen extends StatefulWidget {
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: DetailsBackground(child: _buildBody()));
+    return Scaffold(body: DetailsBackground(child: _buildBody(),items: widget.items,));
   }
 
   Widget _buildBody() {
@@ -60,7 +60,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           padding: const EdgeInsets.all(5.0),
           child: AppText(
             text:
-                'Nam libero tempore, cum soluta nobis est eligendi \n optio cumque nihil impedit quo minus id quod maxime placeat\n facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. ',
+                 widget.items!.description,
             overflow: TextOverflow.clip,
             maxLines: 4,
             style: AppTextStyles.h2_18.copyWith(fontWeight: FontWeight.normal),
@@ -72,7 +72,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   _buildTitleProduct() {
     return AppText(
-      text: 'Olivia  Shayn  Military  TV \n  Cabinet',
+      text: widget.items!.title,
       style: AppTextStyles.h1
           .copyWith(fontSize: 28.sp, fontWeight: FontWeight.normal),
     );

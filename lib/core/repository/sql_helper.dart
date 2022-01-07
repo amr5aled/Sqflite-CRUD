@@ -27,24 +27,9 @@ class NotesDatabase {
   // When creating the db, create the table
   Future _createDB(Database db, int version) async {
     //dataType//
-    const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-    const textType = 'TEXT NOT NULL';
-    const boolType = 'BOOLEAN NOT NULL';
-    const integerType = 'INTEGER NOT NULL';
-
-    await db.execute('''
-CREATE TABLE $tableItems ( 
-  ${ItemsFields.id} $idType, 
-  ${ItemsFields.title} $textType,
-  ${ItemsFields.description} $textType,
-  ${ItemsFields.createdAt} $textType,
-  ${ItemsFields.time} $textType,
-  ${ItemsFields.image} $textType
-   ${ItemsFields.status} $textType,
-  )
-''');
-  }
-
+    const idType = 'integer primary key autoincrement';
+    const textType = 'text not null';
+await db.execute( 'CREATE TABLE $tableItems(${ItemsFields.id} $idType, ${ItemsFields.title} $textType, ${ItemsFields.description} $textType,${ItemsFields.createdAt} $textType,${ItemsFields.image} $textType,${ItemsFields.status} $textType)'); }  
   // Insert some records
   Future create(Items note) async {
     final db = await instance.database;

@@ -4,6 +4,7 @@ import 'package:crudsqlite/core/bloc/notes/notes_states.dart';
 import 'package:crudsqlite/core/models/item_model.dart';
 import 'package:crudsqlite/ui/helper/navigator.dart';
 import 'package:crudsqlite/ui/resources/index.dart';
+import 'package:crudsqlite/ui/screens/addNotes/add_notes.dart';
 import 'package:crudsqlite/ui/widgets/app_card.dart';
 import 'package:crudsqlite/ui/widgets/app_size_boxes.dart';
 import 'package:crudsqlite/ui/widgets/app_text_display.dart';
@@ -20,26 +21,42 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
+  void initState() {
+    NotesCubit.get(context).getNotes();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const AppText(
-          text: AppStrings.home,
+    return BlocProvider<NotesCubit>(
+      create: (_) => NotesCubit()..getNotes(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const AppText(
+            text: AppStrings.home,
+          ),
         ),
-      ),
-      body: _buildBody(),
-      floatingActionButton: FloatingActionButton(
-        elevation: 10.h,
-        onPressed: () {},
-        child: const Icon(Icons.add),
+        body: _buildBody(),
+        floatingActionButton: FloatingActionButton(
+          elevation: 10.h,
+          onPressed: () async {
+            await Navigator.of(context).push(
+              MaterialPageRoute<dynamic>(
+                  builder: (BuildContext context) => const AddNotes()),
+            );
+          },
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }
 
   _buildBody() {
-    return BlocBuilder<NotesCubit, NotesState>(builder: (context, state) {
+    return BlocBuilder<NotesCubit, NotesState>(builder: (_, state) {
       final items = NotesCubit.get(context).items;
-      return items.isNotEmpty
+      print(items);
+      
+      return items.isNotEmpty&&state is NotesLoaded
           ? GridView.count(
               crossAxisCount: 2,
               crossAxisSpacing: 4.0.w,
@@ -57,31 +74,47 @@ class _HomeScreenState extends State<HomeScreen> {
     return AppCard(
       child: Column(
         children: [
-          AppText(
-            text: note.title!,
+          20.heightBox,
+          Expanded(
+            child: AppText(
+              text: note.title!,
+              style: AppTextStyles.title2.copyWith(fontWeight: FontWeight.normal),
+            ),
+          ),
+           14.heightBox,
+          Expanded(
+            flex: 2,
+            child: AppText(
+              text: note.description!,
+              style: AppTextStyles.title2.copyWith(fontWeight: FontWeight.normal),
+            ),
           ),
           4.heightBox,
-          AppText(
-            text: note.description!,
+          Expanded(
+            child: AppText(
+              text: note.status!,
+              style:
+                  AppTextStyles.meduim_14.copyWith(color: AppPalette.errorColor),
+            ),
           ),
           4.heightBox,
-          AppText(
-            text: note.status!,
-          ),
-          4.heightBox,
-          _buildDetailsNote(note),
+      _buildDetailsNote(note),
+          
         ],
       ),
     );
   }
 
   _buildDetailsNote(Items note) {
-    return RaisedButton(
-      onPressed: () {
-        pushName(context, AppRoute.details);
-      },
-      child: const AppText(
-        text: AppStrings.viewMore,
+    return Container(
+      width: double.infinity,
+      child: RaisedButton(
+        onPressed: () {
+          pushName(context, AppRoute.details, arguments: note);
+        },
+        child: const AppText(
+          text: AppStrings.viewMore,
+        ),
       ),
     );
   }

@@ -1,31 +1,46 @@
-// ignore_for_file: sized_box_for_whitespace
+// ignore_for_file: deprecated_member_use
 
+import 'dart:io';
+import 'package:crudsqlite/core/bloc/notes/note_cubit.dart';
+import 'package:crudsqlite/core/bloc/notes/notes_states.dart';
+import 'package:crudsqlite/core/models/item_model.dart';
+import 'package:crudsqlite/ui/screens/addNotes/add_notes.dart';
 import 'package:crudsqlite/ui/widgets/app_size_boxes.dart';
 import 'package:crudsqlite/ui/widgets/size_extension.dart';
 import 'package:flutter/material.dart';
-
-import '../../../resources/index.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DetailsBackground extends StatelessWidget {
-  const DetailsBackground({required this.child});
+   DetailsBackground({required this.child, this.items});
   final Widget child;
+  final Items? items;
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        _buildBackgorund(),
-        _buildLeftButton(context),
-        _buildRightButton(),
-        _buildBody(),
-      ],
+    return BlocListener<NotesCubit, NotesState>(
+      listener: (context, state) {
+        if (state is NotesLoaded) {
+          Navigator.of(context).pop();
+        }
+      },
+      child: Stack(
+        children: [
+          _buildBackgorund(),
+          _buildLeftButton(context),
+          _buildRightButton(context),
+          _buildBody(),
+        ],
+      ),
     );
   }
 
   Widget _buildBackgorund() {
-    return Image.network(
-      "https://www.unodc.org/res/frontpage/2020/November/unodc-celebrates-world-childrens-day_html/Standard_Post_6.png",
-      fit: BoxFit.cover,
-      height: 345,
+    return SafeArea(
+      child: Image.file(
+        File(items!.image!),
+        fit: BoxFit.contain,
+        height: 350.h,
+        width: double.infinity,
+      ),
     );
   }
 
@@ -64,17 +79,48 @@ class DetailsBackground extends StatelessWidget {
     );
   }
 
-  _buildRightButton() {
-    return SafeArea(
-      child: Row(
-        children: [
-          290.widthBox,
-          // ignore: sized_box_for_whitespace
-          Container(height: 60.h, width: 60.w, child: const Icon(Icons.edit)),
+  _buildRightButton(BuildContext context) {
+    return Row(
+      children: [
+        290.widthBox,
+        // ignore: sized_box_for_whitespace
+        GestureDetector(
+            onTap: () async {
+              await Navigator.of(context).push(MaterialPageRoute<dynamic>(
+                  builder: (BuildContext context) =>
+                      AddNotes(isEdit: true, note: items!)));
+            },
+            child: const Icon(Icons.edit)),
 
-          Container(height: 60.h, width: 60.w, child: const Icon(Icons.delete)),
-        ],
-      ),
+        GestureDetector(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Are you sure?'),
+                    content: const Text('This action cannot be undone.'),
+                    actions: [
+                      FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('CANCEL'),
+                      ),
+                      FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          NotesCubit.get(context).delete(items!.id!);
+                        },
+                        child: const Text('DELETE'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            child: const Icon(Icons.delete)),
+      ],
     );
   }
 }

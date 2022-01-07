@@ -12,4 +12,6 @@ abstract class AppStrings {
   static const String time = "Time";
   static const String save = "Save";
   static const String update = "Update";
+  static const String selectImage = "Select Image";
 }
+

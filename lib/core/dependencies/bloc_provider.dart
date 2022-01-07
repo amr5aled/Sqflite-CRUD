@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AppMainBlocProvider extends StatelessWidget {
-  const AppMainBlocProvider({this.child});
+   const AppMainBlocProvider({Key? key, this.child}) : super(key: key);
 
   final Widget? child;
 
@@ -11,7 +11,7 @@ class AppMainBlocProvider extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: <BlocProvider<dynamic>>[
-        BlocProvider(create: (context) => NotesCubit()),
+        BlocProvider<NotesCubit>(create: (context) => NotesCubit()),
       ],
       child: child!,
     );
