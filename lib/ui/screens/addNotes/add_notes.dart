@@ -5,7 +5,9 @@ import 'package:crudsqlite/core/bloc/notes/note_cubit.dart';
 import 'package:crudsqlite/core/bloc/notes/notes_states.dart';
 import 'package:crudsqlite/core/models/item_model.dart';
 import 'package:crudsqlite/core/repository/image_picker.dart';
+import 'package:crudsqlite/core/repository/sql_helper.dart';
 import 'package:crudsqlite/ui/helper/app_validator.dart';
+import 'package:crudsqlite/ui/helper/navigator.dart';
 import 'package:crudsqlite/ui/resources/index.dart';
 import 'package:crudsqlite/ui/widgets/app_size_boxes.dart';
 import 'package:crudsqlite/ui/widgets/app_text_display.dart';
@@ -13,6 +15,8 @@ import 'package:crudsqlite/ui/widgets/form_fields/app_input_text_field.dart';
 import 'package:crudsqlite/ui/widgets/size_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:intl/intl.dart';
 
 class AddNotes extends StatefulWidget {
   final bool? isEdit;
@@ -27,6 +31,7 @@ class AddNotes extends StatefulWidget {
 class _AddNotesState extends State<AddNotes> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
   var formKey = GlobalKey<FormState>();
   String? _currentSelectedValue;
   bool isLoading = false;
@@ -39,19 +44,28 @@ class _AddNotesState extends State<AddNotes> {
       _descriptionController.text = widget.note!.description!;
       imagePath = widget.note!.image!;
       _currentSelectedValue = widget.note!.status!;
+      _dateController.text = widget.note!.createdAt!;
     }
 
     super.initState();
   }
 
   @override
+  void dispose() {
+    NotesDatabase.instance.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<NotesCubit, NotesState>(
       listener: (context, state) {
-        if (state is NotesLoaded) {
-          Navigator.of(context).pop();
-        }   
-      
+        if (state is NotesGetLoaded) {
+          pushName(context, AppRoute.home);
+        }
+        if (state is NotesEditLoaded) {
+          pushName(context, AppRoute.home);
+        }
       },
       builder: (context, state) {
         return Scaffold(
@@ -74,11 +88,13 @@ class _AddNotesState extends State<AddNotes> {
             _buildImageNote(),
             20.heightBox,
             _buildTitleNote(),
-            10.heightBox,
+            16.heightBox,
             _buildDescription(),
-            10.heightBox,
+            16.heightBox,
+            _buildDate(),
+            16.heightBox,
             _buildStatus(),
-            10.heightBox,
+            20.heightBox,
             _buildSaveButton(),
           ],
         ),
@@ -133,7 +149,8 @@ class _AddNotesState extends State<AddNotes> {
   _buildStatus() {
     return FormField<String>(
       validator: (value) => AppValidator.validatorRequired(value!, context),
-      initialValue: _currentSelectedValue,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      initialValue: _currentSelectedValue ?? '',
       builder: (FormFieldState<String> state) {
         return InputDecorator(
           decoration: InputDecoration(
@@ -145,8 +162,7 @@ class _AddNotesState extends State<AddNotes> {
                 ),
                 borderRadius: AppCorners.xlgBorder,
               )),
-
-          // isEmpty: _currentSelectedValue == '',
+          isEmpty: _currentSelectedValue == '',
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: _currentSelectedValue,
@@ -182,7 +198,7 @@ class _AddNotesState extends State<AddNotes> {
                       description: _descriptionController.text,
                       image: imagePath,
                       status: _currentSelectedValue,
-                      createdAt: widget.note!.createdAt),
+                      createdAt: _dateController.text),
                 )
               : NotesCubit.get(context).insert(
                   Items(
@@ -190,7 +206,7 @@ class _AddNotesState extends State<AddNotes> {
                       description: _descriptionController.text,
                       image: imagePath,
                       status: _currentSelectedValue,
-                      createdAt: DateTime.now()),
+                      createdAt: _dateController.text),
                 );
         }
       },
@@ -200,7 +216,31 @@ class _AddNotesState extends State<AddNotes> {
     );
   }
 
+  _buildDate() {
+    return AppFormField(
+        hintText: 'Date',
+        controller: _dateController,
+        onTap: () {
+          DatePicker.showDateTimePicker(
+            context,
+            showTitleActions: true,
+            onChanged: (dynamic date) {
+              _dateController.text =
+                  DateFormat("yyyy-MM-dd").add_jms().format(date);
+            },
+            onConfirm: (date) {
+              _dateController.text =
+                  DateFormat("yyyy-MM-dd").add_jms().format(date);
+            },
+            currentTime: DateTime.now(),
+          );
+        },
+        validator: (dynamic value) =>
+            AppValidator.validatorRequired(value, context));
+  }
+
   Widget _previewImages(String path) {
+    // ignore: sized_box_for_whitespace
     return Container(
       width: 140.w,
       // height: 100.h,

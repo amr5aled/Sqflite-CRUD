@@ -5,9 +5,9 @@ class AppDateFormatter {
   static const String HHMMSS = 'hh:mm:ss';
   static const String YearMothDay = 'yyyy-MM-dd';
 
-  static DateTime textToDate(String text, String lang) {
+  static DateTime textToDate(String text) {
     try {
-      return DateFormat("yyyy-MM-ddThh:mm:ss", lang).parse(text);
+      return DateFormat("yyyy-MM-ddThh:mm:ss").parse(text);
     } catch (_) {
       return DateTime.now();
     }

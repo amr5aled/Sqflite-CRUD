@@ -10,7 +10,6 @@ class ItemsFields {
   static const String title = 'title';
   static const String description = 'description';
   static const String createdAt = 'createdAt';
-
   static const String image = 'image';
   static const String status = 'status';
 }
@@ -19,7 +18,7 @@ class Items {
   int? id;
   String? title;
   String? description;
-  DateTime? createdAt;
+  String? createdAt;
 
   String? image;
   String? status;
@@ -36,7 +35,7 @@ class Items {
         id: json[ItemsFields.id],
         title: json[ItemsFields.title],
         description: json[ItemsFields.description],
-        createdAt: DateTime.parse(json[ItemsFields.createdAt] as String),
+        createdAt: json[ItemsFields.createdAt],
         image: json[ItemsFields.image],
         status: json[ItemsFields.status],
       );
@@ -45,7 +44,7 @@ class Items {
         ItemsFields.id: id,
         ItemsFields.title: title,
         ItemsFields.description: description,
-        ItemsFields.createdAt: createdAt!.toIso8601String(),
+        ItemsFields.createdAt: createdAt!,
         ItemsFields.image: image,
         ItemsFields.status: status,
       };

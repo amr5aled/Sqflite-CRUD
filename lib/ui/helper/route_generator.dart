@@ -1,8 +1,8 @@
-import 'package:crudsqlite/core/models/item_model.dart';
-import 'package:crudsqlite/ui/resources/app_routes.dart';
-import 'package:crudsqlite/ui/screens/addNotes/add_notes.dart';
-import 'package:crudsqlite/ui/screens/home/home_screen.dart';
-import 'package:crudsqlite/ui/screens/productsDetails/productDetails_screen.dart';
+import '../../core/models/item_model.dart';
+import '../resources/app_routes.dart';
+import '../screens/addNotes/add_notes.dart';
+import '../screens/home/home_screen.dart';
+import '../screens/productsDetails/productDetails_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

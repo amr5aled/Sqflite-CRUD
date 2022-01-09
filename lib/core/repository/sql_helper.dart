@@ -29,7 +29,10 @@ class NotesDatabase {
     //dataType//
     const idType = 'integer primary key autoincrement';
     const textType = 'text not null';
-await db.execute( 'CREATE TABLE $tableItems(${ItemsFields.id} $idType, ${ItemsFields.title} $textType, ${ItemsFields.description} $textType,${ItemsFields.createdAt} $textType,${ItemsFields.image} $textType,${ItemsFields.status} $textType)'); }  
+    await db.execute(
+        'CREATE TABLE $tableItems(${ItemsFields.id} $idType, ${ItemsFields.title} $textType, ${ItemsFields.description} $textType,${ItemsFields.createdAt} $textType,${ItemsFields.image} $textType,${ItemsFields.status} $textType)');
+  }
+
   // Insert some records
   Future create(Items note) async {
     final db = await instance.database;
@@ -93,6 +96,7 @@ await db.execute( 'CREATE TABLE $tableItems(${ItemsFields.id} $idType, ${ItemsFi
 
   Future close() async {
     final db = await instance.database;
+    _database = null;
 
     db.close();
   }

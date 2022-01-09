@@ -101,6 +101,8 @@ class AppFormField extends StatelessWidget {
     this.controller,
     this.focusNode,
     this.contentPadding,
+    this.onClick,
+    this.onTap,
     this.textAlignVertical,
   }) : super(key: key);
   final bool autofocus;
@@ -109,8 +111,11 @@ class AppFormField extends StatelessWidget {
   final TextStyle? style;
   final bool obscureText;
   final bool enabled;
+
   final EdgeInsets? contentPadding;
   final TextAlignVertical? textAlignVertical;
+  final Function()? onTap;
+  final Function(String? string)? onClick;
 
   final FormFieldValidator<String>? validator;
   final ValueChanged<String>? onFieldSubmitted;
@@ -152,6 +157,8 @@ class AppFormField extends StatelessWidget {
       autofocus: autofocus,
       readOnly: readOnly,
       expands: expands,
+      onChanged: onClick,
+      onTap: onTap,
       style: style,
       obscureText: obscureText,
       enabled: enabled,

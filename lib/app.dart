@@ -1,8 +1,9 @@
-import 'package:crudsqlite/ui/resources/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'ui/helper/route_generator.dart';
 import 'ui/resources/app_palette.dart';
+import 'ui/resources/app_routes.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);

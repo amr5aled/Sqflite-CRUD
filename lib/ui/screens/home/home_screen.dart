@@ -1,7 +1,8 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, sized_box_for_whitespace
 import 'package:crudsqlite/core/bloc/notes/note_cubit.dart';
 import 'package:crudsqlite/core/bloc/notes/notes_states.dart';
 import 'package:crudsqlite/core/models/item_model.dart';
+import 'package:crudsqlite/core/repository/sql_helper.dart';
 import 'package:crudsqlite/ui/helper/navigator.dart';
 import 'package:crudsqlite/ui/resources/index.dart';
 import 'package:crudsqlite/ui/screens/addNotes/add_notes.dart';
@@ -27,43 +28,55 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void dispose() {
+    NotesDatabase.instance.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider<NotesCubit>(
       create: (_) => NotesCubit()..getNotes(),
       child: Scaffold(
-        appBar: AppBar(
-          title: const AppText(
-            text: AppStrings.home,
+          appBar: AppBar(
+            title: const AppText(
+              text: AppStrings.home,
+            ),
           ),
-        ),
-        body: _buildBody(),
-        floatingActionButton: FloatingActionButton(
-          elevation: 10.h,
-          onPressed: () async {
-            await Navigator.of(context).push(
-              MaterialPageRoute<dynamic>(
-                  builder: (BuildContext context) => const AddNotes()),
-            );
-          },
-          child: const Icon(Icons.add),
-        ),
-      ),
+          body: _buildBody(),
+          floatingActionButton: _buildFloatingActionButton()),
+    );
+  }
+
+  _buildFloatingActionButton() {
+    return FloatingActionButton(
+      elevation: 10.h,
+      onPressed: () {
+        Navigator.of(context).push(
+          MaterialPageRoute<dynamic>(
+              builder: (BuildContext context) => const AddNotes()),
+        );
+      },
+      child: const Icon(Icons.add),
     );
   }
 
   _buildBody() {
-    return BlocBuilder<NotesCubit, NotesState>(builder: (_, state) {
+    return BlocBuilder<NotesCubit, NotesState>(builder: (context, state) {
       final items = NotesCubit.get(context).items;
-      print(items);
-      
-      return items.isNotEmpty&&state is NotesLoaded
-          ? GridView.count(
-              crossAxisCount: 2,
-              crossAxisSpacing: 4.0.w,
-              mainAxisSpacing: 8.0.h,
-              children: List.generate(items.length, (index) {
-                return _buildNotes(items[index]);
-              }))
+
+      return items.isNotEmpty && state is NotesLoaded
+          ? Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: GridView.count(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 8.0.w,
+                  mainAxisSpacing: 10.0.h,
+                  childAspectRatio: .8,
+                  children: List.generate(items.length, (index) {
+                    return _buildNotes(items[index]);
+                  })),
+            )
           : const Center(
               child: Text("No Notes"),
             );
@@ -78,28 +91,28 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: AppText(
               text: note.title!,
-              style: AppTextStyles.title2.copyWith(fontWeight: FontWeight.normal),
+              style:
+                  AppTextStyles.title2.copyWith(fontWeight: FontWeight.normal),
             ),
           ),
-           14.heightBox,
           Expanded(
             flex: 2,
             child: AppText(
               text: note.description!,
-              style: AppTextStyles.title2.copyWith(fontWeight: FontWeight.normal),
+              style:
+                  AppTextStyles.title2.copyWith(fontWeight: FontWeight.normal),
             ),
           ),
-          4.heightBox,
+          12.heightBox,
           Expanded(
             child: AppText(
               text: note.status!,
-              style:
-                  AppTextStyles.meduim_14.copyWith(color: AppPalette.errorColor),
+              style: AppTextStyles.meduim_14
+                  .copyWith(color: AppPalette.errorColor),
             ),
           ),
           4.heightBox,
-      _buildDetailsNote(note),
-          
+          _buildDetailsNote(note),
         ],
       ),
     );
